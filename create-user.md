@@ -37,7 +37,7 @@ If you need the new user to have administrative privileges, add the user to the 
 Ensure the new user can log in via SSH:
 
 - Edit the SSH Configuration File (/etc/ssh/sshd_config):
-  `sudo nano /etc/ssh/sshd_config`
+  `sudo vim /etc/ssh/sshd_config`
 - Verify or Add the Following Settings:
   `PermitRootLogin no
   AllowUsers newusername`
