@@ -21,10 +21,12 @@ If you need the new user to have administrative privileges, add the user to the 
 - Switch to the New User:
   `su - newusername`
 - Create SSH Directory and Authorized Keys:
-  `mkdir -p ~/.ssh
+  ```bash
+  mkdir -p ~/.ssh
   chmod 700 ~/.ssh
   touch ~/.ssh/authorized_keys
-  chmod 600 ~/.ssh/authorized_keys`
+  chmod 600 ~/.ssh/authorized_keys
+  ```
 - Add Your Public Key to authorized_keys:
   - Open authorized_keys in an editor:
     `vim ~/.ssh/authorized_keys`
