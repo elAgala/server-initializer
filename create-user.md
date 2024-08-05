@@ -52,3 +52,18 @@ Ensure the new user can log in via SSH:
 - Log In as the New User:
   `ssh newusername@your_server_ip`
 - Verify that you can access the server with the new user.
+
+## 6. Add Nginx user to new user group (Optional)
+
+If we're trying to provide static content with nginx and the folder with it is inside another user folder (/home/user), you may need to provide the nginx
+user with read access to that folder.
+
+- Locate the user folder where the static content is located.
+- Give access to the nginx user to all the users folders
+```bash
+gpasswd -a www-data username
+```
+- Restart nginx
+```bash
+sudo systemctl restart nginx
+```
