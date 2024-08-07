@@ -16,6 +16,10 @@ If you need the new user to have administrative privileges, add the user to the 
   `sudo usermod -aG sudo newusername`
   This command adds the user to the sudo group, which grants administrative permissions.
 
+- Give user permissions for deployments:
+  `sudo sudo chown -R agala: /var/www/static /var/www/apps`
+  This command gives the user access to the deployment folders so scp file upload is posible
+
 ## 3. Configure SSH Access
 
 - Switch to the New User:
