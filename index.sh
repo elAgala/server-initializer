@@ -92,15 +92,16 @@ echo "New user creation"
 function create_user() {
   read -p "Enter username: " username
 
-  sudo useradd -m -d /home/$username $username
+  sudo useradd $username
   sudo usermod -aG sudo $username
+  sudo usermod -aG docker $username
 
   sudo mkdir -p /var/www/apps /var/www/static
 
-  echo "User $username created with sudo privileges"
+  echo "User $username created with sudo privileges & included in docker user group"
   echo "Apps directory created: /var/www/apps/"
-  echo "Static files directory: /var/www/static"
-  echo "Next step: Create SSH keys. Refer to: [link to SSH key creation guide]"
+  echo "Static files directory: /var/www/static/"
+  echo "Next step: Set up auth via SSH keys. Refer to: [https://github.com/elAgala/server-initializer/blob/main/create_ssh_key.md]"
 }
 
 create_user
