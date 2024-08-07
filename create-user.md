@@ -71,3 +71,9 @@ gpasswd -a www-data username
 ```bash
 sudo systemctl restart nginx
 ```
+
+## 6. Add user to Docker group (to execute docker commands)
+
+```bash
+sudo usermod -aG docker agala
+```
