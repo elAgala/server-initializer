@@ -3,6 +3,11 @@
 REPO_URL="https://github.com/elAgala/server-initializer"
 TARGET_DIR="/tmp/server-initializer"
 
+if [ -z "$1" ]; then
+  echo "[ ERROR ]: No username provided. Use ./index.sh <username>"
+  exit 1
+fi
+
 if [ ! -d "$TARGET_DIR" ]; then
   echo "Cloning the repository..."
   git clone "$REPO_URL" "$TARGET_DIR"

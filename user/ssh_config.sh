@@ -9,10 +9,10 @@ function config_ssh() {
   sudo mkdir -p $ssh_dir
   sudo chmod 700 $ssh_dir
 
-  sudo touch "$ssh_dir/authorized_leys"
-  sudo chmod 600 "$ssh_dir/authorized_leys"
+  sudo touch "$ssh_dir/authorized_keys"
+  sudo chmod 600 "$ssh_dir/authorized_keys"
   sudo chown -R "$username:$username" $ssh_dir
-  echo "[ SSH ]: Created ~/.ssh/authorized_leys"
+  echo "[ SSH ]: Created ~/.ssh/authorized_keys"
 
   echo "[ SSH ]: Paste the public key for $username (leave empty to skip)"
   read -r public_key
@@ -24,7 +24,7 @@ function config_ssh() {
   fi
 
   echo "[ SSH ]: Disabling root login"
-  sudo sed -i 's/^#PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
+  sudo sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
   echo "[ SSH ]: Root login disabled"
 
   echo "[ SSH ]: Adding $username to allowed users"
