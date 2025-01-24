@@ -7,8 +7,8 @@ function install_prometehus() {
 
   echo "[ MONITOR ]: Starting Prometehus setup"
   mkdir -p "$monitoring_dir"
-  curl -L "$REPO_URL/docker-compose.yml" -o "$monitoring_dir/docker-compose.yml"
-  curl -L "$REPO_URL/prometheus.yml" -o "$monitoring_dir/prometheus.yml"
+  wget "$REPO_URL/docker-compose.yml" -O "$monitoring_dir/docker-compose.yml"
+  wget "$REPO_URL/prometheus.yml" -O "$monitoring_dir/prometheus.yml"
   cd "$monitoring_dir"
   echo "[ MONITOR ]: Prometheus Installed. Starting on docker container"
   sudo docker-compose up -d
