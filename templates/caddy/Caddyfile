@@ -1,0 +1,10 @@
+# Static content server
+domain.com {
+        root * /srv/static
+        file_server
+}
+
+# Reverse proxy
+ssl.test.benitez.ar {
+        reverse_proxy * http://localhost:9090
+}

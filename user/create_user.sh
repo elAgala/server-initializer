@@ -15,5 +15,8 @@ function create_user() {
   sudo usermod -aG docker $username
   echo "[ USER ]: User added to the following groupps (sudo, www-data, docker)"
 
+  echo "[ USER ]: Setting ownership of /home/$username folder"
+  sudo chown -R $username:$username /home/$username
+
   echo "[ USER ]: User setup finished"
 }

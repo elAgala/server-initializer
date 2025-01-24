@@ -1,0 +1,14 @@
+services:
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    network_mode: "host" # Allow access to local networks (EX: Backend running on port 3000)
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./settings:/etc/caddy
+      - ./static:/srv/static
+      - ./caddy_data:/data
+      - ./caddy_config:/config
+    restart: unless-stopped
