@@ -9,6 +9,6 @@ function install_zsh() {
   sudo chsh -s /usr/bin/zsh "$username"
   echo "[ UTILS ]: Installing Oh My Zsh for $username"
   # Install Oh My Zsh
-  sudo -u "$username" sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
+  sudo -u "$username" sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -) --unattended"
   echo "[ UTILS ]: Zsh and Oh My Zsh installed successfully and set as the default shell for $username"
 }
