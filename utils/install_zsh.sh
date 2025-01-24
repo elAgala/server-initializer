@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function install_zsh() {
-  username = $1
+  username=$1
   echo "[ UTILS ]: Installing zsh"
   sudo apt-get install -y zsh
   sudo chsh -s /usr/bin/zsh "$username"

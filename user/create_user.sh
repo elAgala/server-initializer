@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function create_user() {
-  username = $1
+  username=$1
 
   echo "[ USER ]: Starting user setup"
   sudo useradd $username

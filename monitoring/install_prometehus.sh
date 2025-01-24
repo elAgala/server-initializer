@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function install_prometehus() {
-  REPO_URL = "https://raw.githubusercontent.com/elAgala/monitoring-template/main"
+  REPO_URL="https://raw.githubusercontent.com/elAgala/monitoring-template/main"
   username="$1"
   monitoring_dir="/home/$username/monitoring"
 

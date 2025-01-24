@@ -1,10 +1,10 @@
 #!/bin/bash
 
 function config_ssh() {
-  username = $1
+  username=$1
 
   echo "[ SSH ]: Starting setup"
-  ssh_dir = "/home/$username/.ssh"
+  ssh_dir="/home/$username/.ssh"
 
   sudo mkdir -p $ssh_dir
   sudo chmod 700 $ssh_dir
