@@ -2,7 +2,6 @@ services:
   caddy:
     image: caddy:latest
     container_name: caddy
-    network_mode: "host" # Allow access to local networks (EX: Backend running on port 3000)
     ports:
       - "80:80"
       - "443:443"
@@ -12,3 +11,9 @@ services:
       - ./caddy_data:/data
       - ./caddy_config:/config
     restart: unless-stopped
+    networks:
+      - caddy_net
+
+networks:
+  caddy_net: # Crete VPN internal - Need to bind running containers to this network as well
+    driver: bridge

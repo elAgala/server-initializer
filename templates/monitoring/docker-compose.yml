@@ -9,6 +9,7 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - monitoring_net
+      - caddy_net
 
   node_exporter:
     image: prom/node-exporter:latest
