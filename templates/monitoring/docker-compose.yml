@@ -20,7 +20,7 @@ services:
 
 networks:
   monitoring_net:
-    driver: bridge
+    external: true
   caddy_net:
     external: true
 

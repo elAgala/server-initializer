@@ -10,6 +10,7 @@ services:
       - COLLECTIONS=crowdsecurity/caddy crowdsecurity/whitelist-good-actors crowdsecurity/http-cve
       - BOUNCER_KEY_CADDY=${CROWDSEC_API_KEY}
     networks:
+      - monitoring_net
       - caddy_net
     restart: unless-stopped
 
@@ -30,6 +31,7 @@ services:
       - caddy_config:/config
     networks:
       - caddy_net
+      - monitoring_net
     depends_on:
       - crowdsec
     restart: unless-stopped
@@ -40,4 +42,6 @@ volumes:
 
 networks:
   caddy_net:
+    external: true
+  monitoring_net:
     external: true

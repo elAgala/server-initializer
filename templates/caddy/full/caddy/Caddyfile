@@ -2,6 +2,11 @@
   # Put Coraza in front of every request
   order coraza_waf first
   
+  # Enable metrics for Prometheus
+  servers {
+    metrics
+  }
+
   # Logging
   log {
     level DEBUG
@@ -16,24 +21,40 @@
 
 }
 
-# Example static
-static.example.com {
-  coraza_waf {
-    directives `
-      Include /etc/caddy/coraza.conf
-    `
-  }
-      
-  root * /src/static/test
-  file_server
-}
+# Example: Static file server
+# static.example.com {
+#   coraza_waf {
+#     directives `
+#       Include /etc/caddy/coraza.conf
+#     `
+#   }
+#
+#   root * /src/static/test
+#   file_server
+# }
 
-api.example.com {
-  coraza_waf {
-    directives `
-      Include /etc/caddy/coraza.conf
-    `
-  }
+# Example: Reverse Proxy for service running in docker container (must be under caddy_net)
+# api.example.com {
+#   coraza_waf {
+#     directives `
+#       Include /etc/caddy/coraza.conf
+#     `
+#   }
+#
+#   reverse_proxy * http://{CONTAINER_NAME}:{CONTAINER_PORT}
+# }
 
-  reverse_proxy * http://{CONTAINER_NAME}:{CONTAINER_PORT}
-}
+# Example: Bypassing WAF for given API path (Useful for allowing prometheus query)
+# api.example2.com {
+#   @waf {
+#     not path /api/v1/*
+#   }
+#   handle @waf {
+#     coraza_waf {
+#       directives `
+#       Include /etc/caddy/coraza.conf
+#       `
+#     }
+#   }
+#   reverse_proxy * http://prometheus:9090
+# }

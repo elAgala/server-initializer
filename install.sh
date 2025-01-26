@@ -5,6 +5,7 @@ source ./user/ssh_config.sh
 source ./web/install_caddy.sh
 source ./web/setup_ufw.sh
 source ./docker/install_docker.sh
+source ./docker/create_networks.sh
 source ./utils/install_vim.sh
 source ./utils/install_zsh.sh
 source ./monitoring/install_prometheus.sh
@@ -25,6 +26,7 @@ fi
 
 # Docker
 install_docker
+create_networks
 
 # Web
 install_caddy $1
