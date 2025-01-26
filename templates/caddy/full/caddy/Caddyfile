@@ -1,0 +1,39 @@
+{
+  # Put Coraza in front of every request
+  order coraza_waf first
+  
+  # Logging
+  log {
+    level DEBUG
+    format console
+  }
+
+  # Allow CrowdSec globally
+  crowdsec {
+    api_url http://crowdsec:8080
+    api_key {$CROWDSEC_API_KEY}
+  }
+
+}
+
+# Example static
+static.example.com {
+  coraza_waf {
+    directives `
+      Include /etc/caddy/coraza.conf
+    `
+  }
+      
+  root * /src/static/test
+  file_server
+}
+
+api.example.com {
+  coraza_waf {
+    directives `
+      Include /etc/caddy/coraza.conf
+    `
+  }
+
+  reverse_proxy * http://{CONTAINER_NAME}:{CONTAINER_PORT}
+}

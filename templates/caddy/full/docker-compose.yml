@@ -1,0 +1,43 @@
+services:
+  crowdsec:
+    image: crowdsecurity/crowdsec:latest
+    container_name: crowdsec
+    volumes:
+      - ./crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml
+      - ./crowdsec/data:/var/lib/crowdsec/data
+      - ./caddy/logs:/var/log/caddy:ro
+    environment:
+      - COLLECTIONS=crowdsecurity/caddy crowdsecurity/whitelist-good-actors crowdsecurity/http-cve
+      - BOUNCER_KEY_CADDY=${CROWDSEC_API_KEY}
+    networks:
+      - caddy_net
+    restart: unless-stopped
+
+  caddy:
+    image: ghcr.io/elagala/server-initializer/caddy-waf-crowdsec:latest 
+    container_name: caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - CROWDSEC_API_KEY=${CROWDSEC_API_KEY}
+    volumes:
+      - ../static:/src/static # Your static files location
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy/coraza/coraza.conf:/etc/caddy/coraza.conf
+      - ./caddy/logs:/var/log/caddy
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - caddy_net
+    depends_on:
+      - crowdsec
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  caddy_net:
+    external: true

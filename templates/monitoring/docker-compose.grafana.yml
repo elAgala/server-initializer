@@ -1,22 +1,20 @@
 services:
+  # PORT 9090
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
     restart: always
-    ports:
-      - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - monitoring_net
       - caddy_net
 
+  # PORT 3000
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     restart: always
-    ports:
-      - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=YOUR_PASSWORD
       - GE_SERVER_ROOT_URL=YOUR_URL
@@ -24,17 +22,19 @@ services:
       - prometheus
     networks:
       - monitoring_net
+      - caddy_net
 
+  # PORT 9100
   node_exporter:
     image: prom/node-exporter:latest
     container_name: node-exporter
     restart: always
-    ports:
-      - "9100:9100"
     networks:
       - monitoring_net
 
 networks:
   monitoring_net:
     driver: bridge
+  caddy_net:
+    external: true
 
