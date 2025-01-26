@@ -10,7 +10,7 @@ caddy\:restart:
 
 caddy\:crowdsec-key
 	@echo "Generating new CrowdSec API key..."
-	@docker exec caddy caddy reload --config /etc/caddy/Caddyfile || true
+	docker exec crowdsec cscli bouncers add caddy-bouncer
 	@echo "\n=== IMPORTANT ===\nCopy the API_KEY from the output above and replace the value of CROWDSEC_API_KEY in your .env file."
 
 caddy\:logs:
