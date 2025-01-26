@@ -3,9 +3,7 @@
   order coraza_waf first
   
   # Enable metrics for Prometheus
-  servers {
-    metrics
-  }
+  metrics
 
   # Logging
   log {
