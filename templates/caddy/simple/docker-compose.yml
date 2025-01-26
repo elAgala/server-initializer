@@ -16,4 +16,4 @@ services:
 
 networks:
   caddy_net: # Crete VPN internal - Need to bind running containers to this network as well
-    driver: bridge
+    external: true # caddy_net must be created before spinning up containers
