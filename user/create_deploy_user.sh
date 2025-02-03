@@ -2,7 +2,11 @@
 
 function create_deploy_user() {
   username="deploy"
-  echo "[ USER ]: Starting user $usernname setup"
+
+  home_dir="/home/$username"
+
+  echo "[ USER ]: Starting user $username setup"
+  mkdir -p $home_dir
   sudo useradd $username
   echo "[ USER ]: Set a password for user [$username]:"
   sudo passwd $username

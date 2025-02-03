@@ -3,7 +3,10 @@
 function create_user() {
   username=$1
 
-  echo "[ USER ]: Starting user setup"
+  home_dir="/home/$username"
+
+  echo "[ USER ]: Starting user $username setup"
+  mkdir -p $home_dir
   sudo useradd $username
   echo "[ USER ]: Set a password for $username:"
   sudo passwd "$username"
