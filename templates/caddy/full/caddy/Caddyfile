@@ -42,11 +42,17 @@
 #   reverse_proxy * http://{CONTAINER_NAME}:{CONTAINER_PORT}
 # }
 
-# Example: Bypassing WAF for given API path (Useful for allowing prometheus query)
+# Example: Bypassing WAF for given API path
+# NEEDED FOR PROMETHEUS
 # api.example2.com {
+#   basic_auth {
+#     agala {$PROMETHEUS_PASSWORD}
+#   }
+#
 #   @waf {
 #     not path /api/v1/*
 #   }
+#
 #   handle @waf {
 #     coraza_waf {
 #       directives `

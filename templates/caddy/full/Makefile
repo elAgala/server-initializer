@@ -8,10 +8,15 @@ caddy\:restart:
 	docker exec caddy caddy reload --config /etc/caddy/Caddyfile
 	@echo "Caddy configuration reloaded successfully."
 
-caddy\:crowdsec-key
+caddy\:crowdsec-key:
 	@echo "Generating new CrowdSec API key..."
 	docker exec crowdsec cscli bouncers add caddy-bouncer
 	@echo "\n=== IMPORTANT ===\nCopy the API_KEY from the output above and replace the value of CROWDSEC_API_KEY in your .env file."
+
+caddy\:generate-password:
+	@echo "Generating new password..."
+	docker exec -it caddy caddy hash-password
+	@echo "\n=== IMPORTANT ===\nCopy the password from the output above and replace the value of PROMETHEUS_PASSWORD in your Caddyfile."
 
 caddy\:logs:
 	@echo "Showing Caddy logs..."

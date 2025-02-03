@@ -1,7 +1,7 @@
 services:
   # PORT 9099
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.1.0
     container_name: prometheus
     restart: always
     volumes:
@@ -12,9 +12,23 @@ services:
 
   # PORT 9100
   node_exporter:
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.8.2
     container_name: node-exporter
     restart: always
+    networks:
+      - monitoring_net
+
+  # PORT 8080
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.2
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    restart: unless-stopped
     networks:
       - monitoring_net
 
