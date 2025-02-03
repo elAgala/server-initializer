@@ -9,6 +9,7 @@ source ./docker/install_docker.sh
 source ./docker/create_networks.sh
 source ./utils/install_vim.sh
 source ./utils/install_zsh.sh
+source ./utils/install_make.sh
 source ./monitoring/install_prometheus.sh
 
 chmod +x ./user/create_user.sh
@@ -43,6 +44,7 @@ config_ssh "deploy"
 # Utils
 install_vim
 install_zsh $1
+install_make
 
 # Monitoring
 install_prometheus $1
