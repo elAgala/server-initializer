@@ -34,6 +34,9 @@ setup_ufw
 
 # User
 create_user $1
+config_ssh $1
+
+# Deploy user
 create_deploy_user
 config_ssh "deploy"
 
