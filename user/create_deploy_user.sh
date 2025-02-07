@@ -17,8 +17,11 @@ function create_deploy_user() {
   sudo usermod -aG docker $username
   echo "[ USER ]: User added to the following groupps (www-data, docker)"
 
+  echo "[ USER ]: Creating deploy folders under /home/$username"
+  sudo mkdir -p /home/$username/static
+  sudo mkdir -p /home/$username/apps
+
   echo "[ USER ]: Setting ownership of /home/$username folder"
   sudo chown -R $username:$username /home/$username
-
   echo "[ USER ]: User setup finished"
 }

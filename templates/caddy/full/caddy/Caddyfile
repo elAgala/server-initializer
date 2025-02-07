@@ -21,13 +21,7 @@
 
 # Example: Static file server
 # static.example.com {
-#   coraza_waf {
-#     directives `
-#       Include /etc/caddy/coraza.conf
-#     `
-#   }
-#
-#   root * /src/static/test
+#   root * /srv/static/test
 #   file_server
 # }
 
