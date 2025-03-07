@@ -23,7 +23,7 @@ services:
     environment:
       - CROWDSEC_API_KEY=${CROWDSEC_API_KEY}
     volumes:
-      - ../../deploy:/srv/static # Your static files location
+      - ../../deploy/static:/srv/static # Your static files location
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
       - ./caddy/coraza/coraza.conf:/etc/caddy/coraza.conf
       - ./caddy/logs:/var/log/caddy
