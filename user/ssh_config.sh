@@ -23,17 +23,33 @@ function config_ssh() {
     echo "[ SSH ]: No public key provided, skipping..."
   fi
 
-  echo "[ SSH ]: Disabling root login"
-  sudo sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
-  echo "[ SSH ]: Root login disabled"
+  # Create SSH configuration file instead of modifying main sshd_config
+  config_file="/etc/ssh/sshd_config.d/server-initializer.conf"
 
-  echo "[ SSH ]: Adding $username to allowed users"
-  if grep -q "^AllowUsers" /etc/ssh/sshd_config; then
-    sudo sed -i "s/^AllowUsers.*/& $username/" /etc/ssh/sshd_config
-  else
-    echo "AllowUsers $username" | sudo tee -a /etc/ssh/sshd_config >/dev/null
-  fi
-  echo "[ SSH ]: User added to allowed users"
+  echo "[ SSH ]: Creating SSH configuration file"
+  sudo mkdir -p /etc/ssh/sshd_config.d
+
+  # Create the configuration file with security settings
+  sudo tee "$config_file" >/dev/null <<EOF
+# Server Initializer SSH Configuration
+# This file is managed by @elAgala/server-initializer
+
+# Disable root login
+PermitRootLogin no
+
+# Disable password authentication
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+UsePAM no
+
+# Only allow specific users
+AllowUsers $username
+EOF
+
+  echo "[ SSH ]: SSH configuration file created at $config_file"
+  echo "[ SSH ]: Root login disabled"
+  echo "[ SSH ]: Password authentication disabled"
+  echo "[ SSH ]: User $username added to allowed users"
 
   sudo systemctl restart sshd
   echo "[ SSH ]: Finished succesfully!"
