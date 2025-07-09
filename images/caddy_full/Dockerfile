@@ -3,8 +3,8 @@ FROM caddy:builder AS builder
 
 # Install xcaddy and build Caddy with plugins
 RUN xcaddy build \
-  --with github.com/corazawaf/coraza-caddy/v2@v2.0.0 \
-  --with github.com/hslatman/caddy-crowdsec-bouncer/http@v0.8.1 \
+  --with github.com/corazawaf/coraza-caddy/v2@v2.1.0 \
+  --with github.com/hslatman/caddy-crowdsec-bouncer/http@v0.9.2 \
   --with github.com/mholt/caddy-l4
 
 # Stage to download OWASP CRS
