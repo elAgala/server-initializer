@@ -26,11 +26,13 @@ function config_ssh() {
   # Create SSH configuration file instead of modifying main sshd_config
   config_file="/etc/ssh/sshd_config.d/server-initializer.conf"
 
-  echo "[ SSH ]: Creating SSH configuration file"
+  echo "[ SSH ]: Configuring SSH settings"
   sudo mkdir -p /etc/ssh/sshd_config.d
 
-  # Create the configuration file with security settings
-  sudo tee "$config_file" >/dev/null <<EOF
+  # Check if config file exists
+  if [ ! -f "$config_file" ]; then
+    # Create the configuration file with security settings
+    sudo tee "$config_file" >/dev/null <<EOF
 # Server Initializer SSH Configuration
 # This file is managed by @elAgala/server-initializer
 
@@ -45,8 +47,18 @@ UsePAM no
 # Only allow specific users
 AllowUsers $username
 EOF
+    echo "[ SSH ]: SSH configuration file created at $config_file"
+  else
+    # File exists, check if user is already in AllowUsers
+    if ! sudo grep -q "AllowUsers.*$username" "$config_file"; then
+      # Add user to existing AllowUsers line
+      sudo sed -i "s/^AllowUsers.*/& $username/" "$config_file"
+      echo "[ SSH ]: User $username added to existing AllowUsers"
+    else
+      echo "[ SSH ]: User $username already in AllowUsers"
+    fi
+  fi
 
-  echo "[ SSH ]: SSH configuration file created at $config_file"
   echo "[ SSH ]: Root login disabled"
   echo "[ SSH ]: Password authentication disabled"
   echo "[ SSH ]: User $username added to allowed users"
