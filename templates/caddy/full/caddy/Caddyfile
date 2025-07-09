@@ -5,10 +5,16 @@
   # Enable metrics for Prometheus
   metrics
 
-  # Logging
+  # Console logging for Docker logs
   log {
     level INFO
     format console
+  }
+
+  # Access logs for CrowdSec and Promtail
+  log {
+    output file /var/log/caddy/access.log
+    format json
   }
 
   # Allow CrowdSec globally
