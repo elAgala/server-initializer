@@ -1,40 +1,21 @@
-services:
-  # PORT 9090
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    restart: always
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    networks:
-      - monitoring_net
-      - caddy_net
+# Grafana add-on for command center servers
+# Use: docker compose -f docker-compose.yml -f docker-compose.grafana.yml up -d
 
+services:
   # PORT 3000
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:11.4.1
     container_name: grafana
-    restart: always
+    restart: unless-stopped
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=YOUR_PASSWORD
-      - GE_SERVER_ROOT_URL=YOUR_URL
-    depends_on:
-      - prometheus
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
     networks:
-      - monitoring_net
       - caddy_net
+    # Note: Grafana connects to external Prometheus instances via HTTPS
 
-  # PORT 9100
-  node_exporter:
-    image: prom/node-exporter:latest
-    container_name: node-exporter
-    restart: always
-    networks:
-      - monitoring_net
-
-networks:
-  monitoring_net:
-    driver: bridge
-  caddy_net:
-    external: true
-
+volumes:
+  grafana_data:

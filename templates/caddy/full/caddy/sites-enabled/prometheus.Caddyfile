@@ -1,20 +1,35 @@
-# Prometheus monitoring endpoint
-# Bypasses WAF for API endpoints since Prometheus scraping doesn't need WAF protection
-prometheus.example.com {
-  basic_auth {
-    agala {$PROMETHEUS_PASSWORD}
-  }
+# Prometheus API endpoint for external Grafana access via IP
+# Access via: https://YOUR_SERVER_IP/prometheus/
+:443 {
+  # Basic auth for Prometheus path
+  handle_path /prometheus/* {
+    basic_auth {
+      prometheus {$PROMETHEUS_PASSWORD}
+    }
 
-  @waf {
-    not path /api/v1/*
-  }
+    # Only allow Prometheus API endpoints that Grafana needs
+    @allowed_endpoints {
+      path /api/v1/*
+      path /federate
+      path /metrics
+    }
 
-  handle @waf {
-    coraza_waf {
-      directives `
-      Include /etc/caddy/coraza.conf
-      `
+    # Block everything else (UI, admin endpoints, etc.)
+    handle {
+      @blocked {
+        not path /api/v1/*
+        not path /federate
+        not path /metrics
+      }
+      respond @blocked "API access only" 403
+    }
+
+    # Forward only allowed endpoints (no WAF needed for API)
+    handle @allowed_endpoints {
+      reverse_proxy * http://prometheus:9090
     }
   }
-  reverse_proxy * http://prometheus:9090
+
+  # Default response for other paths
+  respond "Server monitoring" 200
 }
