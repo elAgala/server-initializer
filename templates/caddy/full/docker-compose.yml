@@ -25,6 +25,7 @@ services:
     volumes:
       - ../../deploy/static:/srv/static # Your static files location
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy/sites-enabled:/etc/caddy/sites-enabled
       - ./caddy/coraza/coraza.conf:/etc/caddy/coraza.conf
       - ./caddy/logs:/var/log/caddy
       - caddy_data:/data

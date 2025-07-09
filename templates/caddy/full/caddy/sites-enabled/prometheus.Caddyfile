@@ -1,0 +1,20 @@
+# Prometheus monitoring endpoint
+# Bypasses WAF for API endpoints since Prometheus scraping doesn't need WAF protection
+prometheus.example.com {
+  basic_auth {
+    agala {$PROMETHEUS_PASSWORD}
+  }
+
+  @waf {
+    not path /api/v1/*
+  }
+
+  handle @waf {
+    coraza_waf {
+      directives `
+      Include /etc/caddy/coraza.conf
+      `
+    }
+  }
+  reverse_proxy * http://prometheus:9090
+}

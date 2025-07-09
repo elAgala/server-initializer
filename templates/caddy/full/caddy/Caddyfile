@@ -7,7 +7,7 @@
 
   # Logging
   log {
-    level DEBUG
+    level INFO
     format console
   }
 
@@ -19,40 +19,5 @@
 
 }
 
-# Example: Static file server
-# static.example.com {
-#   root * /srv/static/test
-#   file_server
-# }
-
-# Example: Reverse Proxy for service running in docker container (must be under caddy_net)
-# api.example.com {
-#   coraza_waf {
-#     directives `
-#       Include /etc/caddy/coraza.conf
-#     `
-#   }
-#
-#   reverse_proxy * http://{CONTAINER_NAME}:{CONTAINER_PORT}
-# }
-
-# Example: Bypassing WAF for given API path
-# NEEDED FOR PROMETHEUS
-# api.example2.com {
-#   basic_auth {
-#     agala {$PROMETHEUS_PASSWORD}
-#   }
-#
-#   @waf {
-#     not path /api/v1/*
-#   }
-#
-#   handle @waf {
-#     coraza_waf {
-#       directives `
-#       Include /etc/caddy/coraza.conf
-#       `
-#     }
-#   }
-#   reverse_proxy * http://prometheus:9090
-# }
+# Import all site configurations from sites-enabled directory
+import /etc/caddy/sites-enabled/*.Caddyfile

@@ -1,0 +1,19 @@
+# Example configurations for different use cases
+# Remove this file and create your own site-specific Caddyfiles
+
+# Example: Static file server
+# static.example.com {
+#   root * /srv/static/YOUR_APP_FOLDER
+#   file_server
+# }
+
+# Example: Reverse Proxy for service running in docker container (must be under caddy_net)
+# api.example.com {
+#   coraza_waf {
+#     directives `
+#       Include /etc/caddy/coraza.conf
+#     `
+#   }
+#
+#   reverse_proxy * http://{CONTAINER_NAME}:{CONTAINER_PORT}
+# }
