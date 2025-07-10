@@ -14,9 +14,9 @@ caddy\:crowdsec-key:
 	@echo "\n=== IMPORTANT ===\nCopy the API_KEY from the output above and replace the value of CROWDSEC_API_KEY in your .env file."
 
 caddy\:generate-password:
-	@echo "Generating new password..."
+	@echo "Generating new password hash..."
 	docker exec -it caddy caddy hash-password
-	@echo "\n=== IMPORTANT ===\nCopy the password from the output above and replace the value of PROMETHEUS_PASSWORD in your Caddyfile."
+	@echo "\n=== IMPORTANT ===\nCopy the password hash from the output above and replace the value of PROMETHEUS_PASSWORD or LOKI_PASSWORD in your .env file."
 
 caddy\:logs:
 	@echo "Showing Caddy logs..."
