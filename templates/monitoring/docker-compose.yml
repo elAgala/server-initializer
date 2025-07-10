@@ -64,6 +64,7 @@ services:
     restart: unless-stopped
     networks:
       - monitoring_net
+      - caddy_net
     command: -config.file=/etc/loki/local-config.yaml
 
   # PORT 9080
