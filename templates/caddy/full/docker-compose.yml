@@ -22,6 +22,8 @@ services:
       - "443:443"
     environment:
       - CROWDSEC_API_KEY=${CROWDSEC_API_KEY}
+      - PROMETHEUS_PASSWORD=${PROMETHEUS_PASSWORD}
+      - LOKI_PASSWORD=${LOKI_PASSWORD}
     volumes:
       - ../../deploy/static:/srv/static # Your static files location
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile

@@ -1,13 +1,15 @@
-# Prometheus API endpoint for external Grafana access
-your_monitoring_domain {
+# Loki API endpoint for external Grafana/API access
+your_logging_domain {
+  # Basic auth for Loki path
   basic_auth {
-    prometheus {$PROMETHEUS_PASSWORD}
+    loki {$LOKI_PASSWORD}
   }
 
-  # Only allow Prometheus API endpoints that Grafana needs
+  # Only allow Loki API endpoints that Grafana needs
   @allowed_endpoints {
     path /api/v1/*
-    path /federate
+    path /loki/api/v1/*
+    path /ready
     path /metrics
   }
 
@@ -15,7 +17,8 @@ your_monitoring_domain {
   handle {
     @blocked {
       not path /api/v1/*
-      not path /federate
+      not path /loki/api/v1/*
+      not path /ready
       not path /metrics
     }
     respond @blocked "API access only" 403
@@ -23,6 +26,6 @@ your_monitoring_domain {
 
   # Forward only allowed endpoints (no WAF needed for API)
   handle @allowed_endpoints {
-    reverse_proxy * prometheus:9090
+    reverse_proxy * http://loki:3100
   }
 }
