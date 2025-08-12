@@ -1,0 +1,330 @@
+groups:
+  - name: infrastructure
+    title: Infrastructure Alerts
+    folder: alerting
+    orgId: 1
+    interval: 30s
+    rules:
+      - uid: instance-down
+        title: Instance Down
+        condition: C
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: up == 0
+              interval: ''
+              refId: A
+          - refId: C
+            queryType: ''
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - A
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              hide: false
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: C
+              type: reduce
+        noDataState: NoData
+        execErrState: Alerting
+        for: 5m
+        annotations:
+          summary: "Instance {{ $labels.instance }} down"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+        labels:
+          severity: critical
+
+      - uid: high-cpu-usage
+        title: High CPU Usage
+        condition: C
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+              interval: ''
+              refId: A
+          - refId: C
+            queryType: ''
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: [80]
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - A
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              hide: false
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: C
+              type: reduce
+        noDataState: NoData
+        execErrState: Alerting
+        for: 5m
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is {{ $value }}% on {{ $labels.instance }} for more than 5 minutes."
+        labels:
+          severity: warning
+
+      - uid: high-memory-usage
+        title: High Memory Usage
+        condition: C
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
+              interval: ''
+              refId: A
+          - refId: C
+            queryType: ''
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: [90]
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - A
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              hide: false
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: C
+              type: reduce
+        noDataState: NoData
+        execErrState: Alerting
+        for: 5m
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is {{ $value }}% on {{ $labels.instance }} for more than 5 minutes."
+        labels:
+          severity: critical
+
+      - uid: disk-space-critical
+        title: Disk Space Critical
+        condition: C
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: (1 - (node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes{fstype!="tmpfs"})) * 100
+              interval: ''
+              refId: A
+          - refId: C
+            queryType: ''
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: [95]
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - A
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              hide: false
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: C
+              type: reduce
+        noDataState: NoData
+        execErrState: Alerting
+        for: 2m
+        annotations:
+          summary: "Critical disk space on {{ $labels.instance }}"
+          description: "Disk usage is {{ $value }}% on {{ $labels.instance }} ({{ $labels.mountpoint }})"
+        labels:
+          severity: critical
+
+  - name: web-server
+    title: Web Server Alerts
+    folder: alerting
+    orgId: 1
+    interval: 30s
+    rules:
+      - uid: caddy-down
+        title: Caddy Down
+        condition: C
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 60
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: up{job="caddy"}
+              interval: ''
+              refId: A
+          - refId: C
+            queryType: ''
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: [1]
+                    type: lt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - A
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              hide: false
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: C
+              type: reduce
+        noDataState: NoData
+        execErrState: Alerting
+        for: 1m
+        annotations:
+          summary: "Caddy web server is down"
+          description: "Caddy web server has been down for more than 1 minute."
+        labels:
+          severity: critical
+
+      - uid: crowdsec-down
+        title: CrowdSec Down
+        condition: C
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 120
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: up{job="crowdsec"}
+              interval: ''
+              refId: A
+          - refId: C
+            queryType: ''
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: [1]
+                    type: lt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - A
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              hide: false
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: C
+              type: reduce
+        noDataState: NoData
+        execErrState: Alerting
+        for: 2m
+        annotations:
+          summary: "CrowdSec is down"
+          description: "CrowdSec security engine has been down for more than 2 minutes."
+        labels:
+          severity: warning

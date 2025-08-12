@@ -23,6 +23,64 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 99,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.0.0",
+      "targets": [
+        {
+          "expr": "count(ALERTS{alertstate=\"firing\"})",
+          "interval": "",
+          "legendFormat": "Active Alerts",
+          "refId": "A"
+        }
+      ],
+      "title": "Active Alerts",
+      "type": "stat"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
             "mode": "palette-classic"
           },
           "custom": {
@@ -75,7 +133,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 0
+        "y": 4
       },
       "id": 1,
       "options": {
@@ -156,7 +214,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 4
       },
       "id": 2,
       "options": {
@@ -237,7 +295,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 8
+        "y": 12
       },
       "id": 3,
       "options": {
@@ -318,7 +376,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 8
+        "y": 12
       },
       "id": 4,
       "options": {
@@ -377,7 +435,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 16
+        "y": 20
       },
       "id": 5,
       "options": {
@@ -481,7 +539,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 16
+        "y": 20
       },
       "id": 6,
       "options": {
@@ -562,7 +620,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 16
+        "y": 20
       },
       "id": 7,
       "options": {

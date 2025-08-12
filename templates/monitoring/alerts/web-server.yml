@@ -1,0 +1,65 @@
+groups:
+  - name: web-server
+    rules:
+      - alert: CaddyDown
+        expr: up{job="caddy"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Caddy web server is down"
+          description: "Caddy web server has been down for more than 1 minute."
+
+      - alert: HighHttpErrorRate
+        expr: rate(caddy_http_responses_total{status=~"5.."}[5m]) / rate(caddy_http_responses_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High HTTP 5xx error rate"
+          description: "HTTP 5xx error rate is above 10% for more than 5 minutes."
+
+      - alert: HighHttpResponseTime
+        expr: histogram_quantile(0.95, rate(caddy_http_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High HTTP response time"
+          description: "95th percentile HTTP response time is above 2 seconds for more than 5 minutes."
+
+      - alert: CrowdSecDown
+        expr: up{job="crowdsec"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CrowdSec is down"
+          description: "CrowdSec security engine has been down for more than 2 minutes."
+
+      - alert: HighActiveConnections
+        expr: caddy_http_requests_in_flight > 100
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High number of active HTTP connections"
+          description: "Number of active HTTP connections is above 100 for more than 5 minutes."
+
+      - alert: CertificateExpiringSoon
+        expr: (caddy_tls_cert_not_after - time()) / 86400 < 30
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "TLS certificate expiring soon"
+          description: "TLS certificate for {{ $labels.san }} expires in {{ $value }} days."
+
+      - alert: CertificateExpired
+        expr: caddy_tls_cert_not_after < time()
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "TLS certificate expired"
+          description: "TLS certificate for {{ $labels.san }} has expired."

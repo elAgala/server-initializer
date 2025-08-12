@@ -6,6 +6,7 @@ services:
     restart: always
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alerts:/etc/prometheus/alerts
       - prometheus_data:/prometheus
     networks:
       - monitoring_net

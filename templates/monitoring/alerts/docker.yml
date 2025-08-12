@@ -1,0 +1,47 @@
+groups:
+  - name: docker
+    rules:
+      - alert: ContainerDown
+        expr: rate(container_last_seen[5m]) == 0 and container_last_seen > 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container {{ $labels.name }} is down"
+          description: "Container {{ $labels.name }} has been down for more than 5 minutes."
+
+      - alert: ContainerHighCpuUsage
+        expr: rate(container_cpu_usage_seconds_total[5m]) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage in container {{ $labels.name }}"
+          description: "Container {{ $labels.name }} CPU usage is above 80% for more than 5 minutes."
+
+      - alert: ContainerHighMemoryUsage
+        expr: (container_memory_usage_bytes / container_spec_memory_limit_bytes) * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage in container {{ $labels.name }}"
+          description: "Container {{ $labels.name }} memory usage is above 90% for more than 5 minutes."
+
+      - alert: ContainerRestarting
+        expr: increase(container_restart_count[1h]) > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container {{ $labels.name }} restarting frequently"
+          description: "Container {{ $labels.name }} has restarted {{ $value }} times in the last hour."
+
+      - alert: ContainerOOMKilled
+        expr: increase(container_oom_kill_events_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Container {{ $labels.name }} killed by OOM"
+          description: "Container {{ $labels.name }} was killed due to out of memory."

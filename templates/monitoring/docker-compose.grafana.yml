@@ -1,6 +1,3 @@
-# Grafana add-on for command center servers
-# Use: docker compose -f docker-compose.yml -f docker-compose.grafana.yml up -d
-
 services:
   # PORT 3000
   grafana:
@@ -16,7 +13,6 @@ services:
       - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
     networks:
       - caddy_net
-    # Note: Grafana connects to external Prometheus instances via HTTPS
 
 volumes:
   grafana_data:
