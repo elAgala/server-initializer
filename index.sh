@@ -13,13 +13,9 @@ if [ ! -d "$TARGET_DIR" ]; then
   git clone "$REPO_URL" "$TARGET_DIR"
 fi
 
-cd "$TARGET_DIR" || exit 1
+cd "$TARGET_DIR/src" || exit 1
 
 echo "[ INITIALIZER ]: Starting initialization"
-echo "[ INITIALIZER ]: Updating server"
-sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y && sudo apt autoremove -y
-
-echo "[ INITIALIZER ]: Server updated. Starting set up"
 
 chmod +x ./install.sh
 ./install.sh "$1"

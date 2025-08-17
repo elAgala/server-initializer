@@ -1,5 +1,5 @@
 # Build stage with xcaddy
-FROM caddy:builder AS builder
+FROM caddy:2.10.0-builder AS builder
 
 # Install xcaddy and build Caddy with plugins
 RUN xcaddy build \
@@ -15,7 +15,7 @@ RUN apk add --no-cache git && \
   mv /coreruleset/crs-setup.conf.example /coreruleset/crs-setup.conf
 
 # Final stage
-FROM caddy:latest
+FROM caddy:2.10.0
 
 # Copy custom Caddy binary
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
