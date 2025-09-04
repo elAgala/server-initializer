@@ -76,6 +76,23 @@ EOF
       return 1
     fi
 
+    # Wait for Caddy to be ready with health check
+    echo "[ WEB ]: Waiting for Caddy to be ready..."
+    for i in {1..30}; do
+      if sudo docker exec caddy caddy version >/dev/null 2>&1; then
+        echo "[ WEB ]: Caddy is ready!"
+        break
+      fi
+      echo "[ WEB ]: Waiting for Caddy... ($i/30)"
+      sleep 2
+    done
+
+    # Check if Caddy is ready
+    if ! sudo docker exec caddy caddy version >/dev/null 2>&1; then
+      echo "[ WEB ]: ERROR: Caddy failed to start properly. Check logs with: docker compose logs caddy"
+      return 1
+    fi
+
     # Generate CrowdSec API key
     echo "[ WEB ]: Generating CrowdSec API key..."
     CROWDSEC_API_KEY=$(sudo docker exec crowdsec cscli bouncers add caddy-bouncer -o raw)
