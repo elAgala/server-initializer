@@ -51,6 +51,12 @@ config_ssh "deploy"
 install_docker
 create_networks
 
+# Add users to docker group (after Docker installation creates the group)
+echo "[ INSTALL ]: Adding users to docker group"
+sudo usermod -aG docker $1
+sudo usermod -aG docker deploy
+echo "[ INSTALL ]: Users $1 and deploy added to docker group"
+
 # Web
 install_caddy $1 "$REPO_DIR" "$DEVELOPMENT_MODE"
 setup_ufw

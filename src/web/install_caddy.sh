@@ -24,6 +24,7 @@ function install_caddy() {
   cp "$template_path/caddy/coraza/coraza.conf" "$caddy_dir/caddy/coraza/coraza.conf"
   cp "$template_path/crowdsec/acquis.yaml" "$caddy_dir/crowdsec/acquis.yaml"
   cp "$template_path/caddy/sites-enabled/prometheus.Caddyfile" "$caddy_dir/caddy/sites-enabled/prometheus.Caddyfile"
+  cp "$template_path/caddy/sites-enabled/loki.Caddyfile" "$caddy_dir/caddy/sites-enabled/loki.Caddyfile"
   cp "$template_path/caddy/sites-enabled/examples.Caddyfile" "$caddy_dir/caddy/sites-enabled/examples.Caddyfile"
 
   if [ "$development_mode" = "true" ]; then
