@@ -84,9 +84,9 @@ EOF
 
     # Create final .env file with all real values
     cat >"$caddy_dir/.env" <<EOF
-CROWDSEC_API_KEY=$CROWDSEC_API_KEY
-PROMETHEUS_PASSWORD=$PROMETHEUS_PASSWORD
-LOKI_PASSWORD=$LOKI_PASSWORD
+CROWDSEC_API_KEY='$CROWDSEC_API_KEY'
+PROMETHEUS_PASSWORD='$PROMETHEUS_PASSWORD'
+LOKI_PASSWORD='$LOKI_PASSWORD'
 EOF
 
     # Start all containers now that passwords are ready
