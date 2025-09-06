@@ -37,10 +37,10 @@ PROMETHEUS_PASSWORD=dev-placeholder-password
 LOKI_PASSWORD=dev-placeholder-password
 EOF
   else
-    echo "[ WEB ]: Starting containers to generate keys..."
-    cd "$caddy_dir"
+    echo "[ WEB ]: Installing apache2-utils for password hashing..."
+    sudo apt-get update
+    sudo apt-get install -y apache2-utils
 
-    # Prompt user for passwords and encrypt them using Caddy
     echo "[ WEB ]: Setting up authentication passwords..."
     echo -n "Enter password for Prometheus access: "
     read -s prometheus_plain_password
@@ -49,15 +49,17 @@ EOF
     read -s loki_plain_password
     echo
 
-    # Create .env file with placeholder
-    cat >"$caddy_dir/.env" <<EOF
-CROWDSEC_API_KEY=PLACEHOLDER_WILL_BE_REPLACED
-PROMETHEUS_PASSWORD=PLACEHOLDER_WILL_BE_REPLACED
-LOKI_PASSWORD=PLACEHOLDER_WILL_BE_REPLACED
-EOF
+    # Generate password hashes using htpasswd (no Caddy needed)
+    echo "[ WEB ]: Hashing Prometheus password..."
+    PROMETHEUS_PASSWORD=$(htpasswd -nbB user "$prometheus_plain_password" | cut -d: -f2)
+    echo "[ WEB ]: Hashing Loki password..."
+    LOKI_PASSWORD=$(htpasswd -nbB user "$loki_plain_password" | cut -d: -f2)
 
-    # Start containers
-    sudo docker compose up -d
+    cd "$caddy_dir"
+
+    # Start only CrowdSec first
+    echo "[ WEB ]: Starting CrowdSec container..."
+    sudo docker compose up -d crowdsec
 
     # Wait for CrowdSec to be ready with health check
     echo "[ WEB ]: Waiting for CrowdSec to be ready..."
@@ -76,43 +78,19 @@ EOF
       return 1
     fi
 
-    # Wait for Caddy to be ready with health check
-    echo "[ WEB ]: Waiting for Caddy to be ready..."
-    for i in {1..30}; do
-      if sudo docker exec caddy caddy version >/dev/null 2>&1; then
-        echo "[ WEB ]: Caddy is ready!"
-        break
-      fi
-      echo "[ WEB ]: Waiting for Caddy... ($i/30)"
-      sleep 2
-    done
-
-    # Check if Caddy is ready
-    if ! sudo docker exec caddy caddy version >/dev/null 2>&1; then
-      echo "[ WEB ]: ERROR: Caddy failed to start properly. Check logs with: docker compose logs caddy"
-      return 1
-    fi
-
     # Generate CrowdSec API key
     echo "[ WEB ]: Generating CrowdSec API key..."
     CROWDSEC_API_KEY=$(sudo docker exec crowdsec cscli bouncers add caddy-bouncer -o raw)
 
-    # Encrypt passwords using Caddy
-    echo "[ WEB ]: Encrypting Prometheus password..."
-    PROMETHEUS_PASSWORD=$(sudo docker exec caddy caddy hash-password --plaintext "$prometheus_plain_password")
-    echo "[ WEB ]: Encrypting Loki password..."
-    LOKI_PASSWORD=$(sudo docker exec caddy caddy hash-password --plaintext "$loki_plain_password")
-
-    # Update .env file with real API key and encrypted passwords
+    # Create final .env file with all real values
     cat >"$caddy_dir/.env" <<EOF
 CROWDSEC_API_KEY=$CROWDSEC_API_KEY
 PROMETHEUS_PASSWORD=$PROMETHEUS_PASSWORD
 LOKI_PASSWORD=$LOKI_PASSWORD
 EOF
 
-    # Restart containers with new API key
-    echo "[ WEB ]: Restarting containers with generated keys..."
-    sudo docker compose down
+    # Start all containers now that passwords are ready
+    echo "[ WEB ]: Starting all containers with generated keys..."
     sudo docker compose up -d
   fi
 
