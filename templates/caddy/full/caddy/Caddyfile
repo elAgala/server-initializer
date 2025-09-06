@@ -8,10 +8,8 @@
   # Logging - console for Docker logs and file for CrowdSec/Promtail
   log {
     level INFO
+    output file /var/log/caddy/access.log
     format console
-    output file /var/log/caddy/access.log {
-      format json
-    }
   }
 
   # Allow CrowdSec globally
