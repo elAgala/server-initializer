@@ -7,8 +7,8 @@ function create_user() {
 
   echo "[ USER ]: Starting user $username setup"
   sudo useradd -m -s /bin/bash $username
-  password="${ADMIN_PASSWORD:-$(openssl rand -base64 16)}"
-  echo "$username:$password" | sudo chpasswd
+  ADMIN_USER_PASSWORD="${ADMIN_PASSWORD:-$(openssl rand -base64 16)}"
+  echo "$username:$ADMIN_USER_PASSWORD" | sudo chpasswd
   echo "[ USER ]: Password set for $username (use ADMIN_PASSWORD env var to specify)"
   echo "[ USER ]: User created succesfully"
 

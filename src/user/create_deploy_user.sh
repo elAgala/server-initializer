@@ -7,8 +7,8 @@ function create_deploy_user() {
 
   echo "[ USER ]: Starting user $username setup"
   sudo useradd -m -s /bin/bash $username
-  password="${DEPLOY_PASSWORD:-$(openssl rand -base64 16)}"
-  echo "$username:$password" | sudo chpasswd
+  DEPLOY_USER_PASSWORD="${DEPLOY_PASSWORD:-$(openssl rand -base64 16)}"
+  echo "$username:$DEPLOY_USER_PASSWORD" | sudo chpasswd
   echo "[ USER ]: Password set for $username (use DEPLOY_PASSWORD env var to specify)"
   echo "[ USER ]: User [deploy] created succesfully"
 

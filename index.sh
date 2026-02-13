@@ -22,7 +22,3 @@ echo "[ INITIALIZER ]: Starting initialization"
 
 chmod +x ./install.sh
 ./install.sh "$ADMIN_USER"
-
-echo "[ INITIALIZER ]: Setup completed succesfully!"
-
-echo "[ INITIALIZER ]: Success!"

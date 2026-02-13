@@ -89,11 +89,6 @@ EOF
     echo "[ WEB ]: Starting all containers with generated keys..."
     sudo docker compose up -d
 
-    echo "[ WEB ]: ============================================"
-    echo "[ WEB ]: SAVE THESE - Plaintext monitoring passwords:"
-    echo "[ WEB ]:   Prometheus: $prometheus_plain_password"
-    echo "[ WEB ]:   Loki:       $loki_plain_password"
-    echo "[ WEB ]: ============================================"
   fi
 
   echo "[ WEB ]: Caddy setup completed successfully!"

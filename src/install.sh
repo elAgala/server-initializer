@@ -1,9 +1,5 @@
 #!/bin/bash
 
-echo "[ INSTALL ]: Updating server packages"
-sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y && sudo apt autoremove -y
-echo "[ INSTALL ]: Server updated. Starting component installation"
-
 source ./user/create_user.sh
 source ./user/create_deploy_user.sh
 source ./user/ssh_config.sh
@@ -33,38 +29,87 @@ fi
 DEVELOPMENT_MODE=false
 if [ "$2" = "--development" ]; then
   DEVELOPMENT_MODE=true
-  echo "[ INSTALL ]: Running in development mode - Docker operations will be skipped"
 fi
 
 # Get the repository directory (parent of src/)
 REPO_DIR="$(dirname "$PWD")"
 
+# Log file for verbose output
+LOG_FILE="/var/log/server-initializer.log"
+> "$LOG_FILE"
+
+run_step() {
+  local label="$1"
+  shift
+  printf "  %-40s" "$label"
+  if "$@" >> "$LOG_FILE" 2>&1; then
+    echo "done"
+  else
+    echo "FAILED (see $LOG_FILE)"
+    exit 1
+  fi
+}
+
+echo ""
+echo "============================================"
+echo "       SERVER INITIALIZATION"
+echo "============================================"
+echo ""
+
+if [ "$DEVELOPMENT_MODE" = "true" ]; then
+  echo "  Mode: development (Docker ops skipped)"
+  echo ""
+fi
+
+# Update server packages
+run_step "Updating server packages..." bash -c 'sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y && sudo apt autoremove -y'
+
 # User
-create_user $1
-config_ssh $1
+run_step "Creating admin user..." create_user "$1"
+run_step "Configuring SSH for $1..." config_ssh "$1"
 
 # Deploy user
-create_deploy_user
-config_ssh "deploy"
+run_step "Creating deploy user..." create_deploy_user
+run_step "Configuring SSH for deploy..." config_ssh "deploy"
 
 # Docker
-install_docker
-create_networks
+run_step "Installing Docker..." install_docker
+run_step "Creating Docker networks..." create_networks
 
-# Add users to docker group (after Docker installation creates the group)
-echo "[ INSTALL ]: Adding users to docker group"
-sudo usermod -aG docker $1
-sudo usermod -aG docker deploy
-echo "[ INSTALL ]: Users $1 and deploy added to docker group"
+# Add users to docker group
+run_step "Adding users to Docker group..." bash -c "sudo usermod -aG docker $1 && sudo usermod -aG docker deploy"
 
 # Web
-install_caddy $1 "$REPO_DIR" "$DEVELOPMENT_MODE"
-setup_ufw
+run_step "Installing Caddy..." install_caddy "$1" "$REPO_DIR" "$DEVELOPMENT_MODE"
+run_step "Setting up UFW..." setup_ufw
 
 # Utils
-install_vim
-install_zsh $1
-install_make
+run_step "Installing Vim..." install_vim
+run_step "Installing Zsh..." install_zsh "$1"
+run_step "Installing Make..." install_make
 
 # Monitoring
-install_prometheus $1 "$REPO_DIR" "$DEVELOPMENT_MODE"
+run_step "Installing monitoring stack..." install_prometheus "$1" "$REPO_DIR" "$DEVELOPMENT_MODE"
+
+echo ""
+echo "============================================"
+echo "           INSTALLATION SUMMARY"
+echo "============================================"
+echo ""
+echo "USERS"
+echo "  Admin:  $1 / $ADMIN_USER_PASSWORD"
+echo "  Deploy: deploy / $DEPLOY_USER_PASSWORD"
+echo ""
+echo "WEB SERVER (Caddy)"
+echo "  Dir:    /home/$1/web-server"
+echo "  Sites:  /home/$1/web-server/caddy/sites-enabled/"
+echo ""
+echo "MONITORING"
+echo "  Dir:              /home/$1/monitoring"
+echo "  Prometheus pass:  $prometheus_plain_password"
+echo "  Loki pass:        $loki_plain_password"
+echo ""
+echo "CROWDSEC"
+echo "  API Key: $CROWDSEC_API_KEY"
+echo ""
+echo "============================================"
