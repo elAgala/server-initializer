@@ -25,7 +25,8 @@ function config_ssh() {
     echo "$public_key" | sudo tee -a "$ssh_dir/authorized_keys" >/dev/null
     echo "[ SSH ]: Public key added to $ssh_dir/authorized_keys."
   else
-    echo "[ SSH ]: WARNING: No SSH key provided for $username (set ADMIN_SSH_KEY / DEPLOY_SSH_KEY)"
+    echo "[ SSH ]: ERROR: No SSH key provided for $username"
+    return 1
   fi
 
   # Create SSH configuration file instead of modifying main sshd_config

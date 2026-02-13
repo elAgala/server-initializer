@@ -34,6 +34,25 @@ fi
 # Get the repository directory (parent of src/)
 REPO_DIR="$(dirname "$PWD")"
 
+# Validate required SSH keys (skip in development mode)
+if [ "$DEVELOPMENT_MODE" = "false" ]; then
+  missing=""
+  if [ -z "${ADMIN_SSH_KEY:-}" ]; then
+    missing="ADMIN_SSH_KEY"
+  fi
+  if [ -z "${DEPLOY_SSH_KEY:-}" ]; then
+    missing="${missing:+$missing, }DEPLOY_SSH_KEY"
+  fi
+  if [ -n "$missing" ]; then
+    echo "ERROR: Missing required environment variables: $missing"
+    echo "SSH keys are required because password authentication will be disabled."
+    echo ""
+    echo "Usage:"
+    echo "  ADMIN_SSH_KEY='ssh-ed25519 ...' DEPLOY_SSH_KEY='ssh-ed25519 ...' $0 <username>"
+    exit 1
+  fi
+fi
+
 # Log file for verbose output
 LOG_FILE="/var/log/server-initializer.log"
 > "$LOG_FILE"
@@ -99,6 +118,13 @@ echo ""
 echo "USERS"
 echo "  Admin:  $1 / $ADMIN_USER_PASSWORD"
 echo "  Deploy: deploy / $DEPLOY_USER_PASSWORD"
+echo ""
+echo "SSH"
+echo "  Config:         /etc/ssh/sshd_config.d/server-initializer.conf"
+echo "  Admin:          key installed"
+echo "  Deploy:         key installed"
+echo "  Root login:     disabled"
+echo "  Password auth:  disabled"
 echo ""
 echo "WEB SERVER (Caddy)"
 echo "  Dir:    /home/$1/web-server"
