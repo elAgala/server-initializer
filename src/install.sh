@@ -60,11 +60,28 @@ LOG_FILE="/var/log/server-initializer.log"
 run_step() {
   local label="$1"
   shift
+  local spin_chars='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
+  local sc_len=${#spin_chars}
+
   printf "  %-40s" "$label"
-  if "$@" >> "$LOG_FILE" 2>&1; then
-    echo "done"
+
+  "$@" >> "$LOG_FILE" 2>&1 &
+  local pid=$!
+  local i=0
+
+  while kill -0 "$pid" 2>/dev/null; do
+    printf "\b%s" "${spin_chars:i%sc_len:1}"
+    i=$((i + 1))
+    sleep 0.1
+  done
+
+  wait "$pid"
+  local exit_code=$?
+
+  if [ $exit_code -eq 0 ]; then
+    printf "\bdone\n"
   else
-    echo "FAILED (see $LOG_FILE)"
+    printf "\bFAILED (see $LOG_FILE)\n"
     exit 1
   fi
 }
