@@ -8,8 +8,9 @@ function create_user() {
   echo "[ USER ]: Starting user $username setup"
   mkdir -p $home_dir
   sudo useradd $username
-  echo "[ USER ]: Set a password for $username:"
-  sudo passwd "$username"
+  password="${ADMIN_PASSWORD:-$(openssl rand -base64 16)}"
+  echo "$username:$password" | sudo chpasswd
+  echo "[ USER ]: Password set for $username (use ADMIN_PASSWORD env var to specify)"
   echo "[ USER ]: User created succesfully"
 
   echo "[ USER ]: Adding user to groups"

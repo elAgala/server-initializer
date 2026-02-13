@@ -14,25 +14,29 @@ Server-initializer is a Docker-based server setup automation tool that provision
 
 ### Development and Testing
 ```bash
-# Build and test setup script in development mode
+# Build and test setup script in development mode (skips Docker operations)
 make dev
 
 # Build and keep container alive for testing
 make dev-keep-alive
 
-# Build Docker test container
+# Build Docker test container  
 make build
 
 # Clean up test containers and images
 make clean
 
-# Build custom Caddy image with WAF and CrowdSec
+# Build custom Caddy image with WAF and CrowdSec (includes push to registry)
 make build-caddy
 ```
 
+The `--development` flag can be passed to `install.sh` to skip Docker-related operations during testing.
+
 ### Caddy Management (from deployed server)
+These commands should be run from within the `templates/caddy/full/` directory on the deployed server:
+
 ```bash
-# Restart Caddy with config reload
+# Restart Caddy with config reload  
 make caddy:restart
 
 # Generate new CrowdSec API key

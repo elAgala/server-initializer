@@ -3,8 +3,9 @@
 REPO_URL="https://github.com/elAgala/server-initializer"
 TARGET_DIR="/tmp/server-initializer"
 
-if [ -z "$1" ]; then
-  echo "[ ERROR ]: No username provided. Use ./index.sh <username>"
+ADMIN_USER="${1:-${ADMIN_USER:-}}"
+if [ -z "$ADMIN_USER" ]; then
+  echo "[ ERROR ]: No username provided. Pass as argument or set ADMIN_USER env var"
   exit 1
 fi
 
@@ -18,7 +19,7 @@ cd "$TARGET_DIR/src" || exit 1
 echo "[ INITIALIZER ]: Starting initialization"
 
 chmod +x ./install.sh
-./install.sh "$1"
+./install.sh "$ADMIN_USER"
 
 echo "[ INITIALIZER ]: Setup completed succesfully!"
 

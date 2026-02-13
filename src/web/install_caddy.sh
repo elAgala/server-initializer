@@ -42,12 +42,8 @@ EOF
     sudo apt-get install -y apache2-utils
 
     echo "[ WEB ]: Setting up authentication passwords..."
-    echo -n "Enter password for Prometheus access: "
-    read -s prometheus_plain_password
-    echo
-    echo -n "Enter password for Loki access: "
-    read -s loki_plain_password
-    echo
+    prometheus_plain_password="${MONITORING_PROMETHEUS_PASSWORD:-$(openssl rand -base64 16)}"
+    loki_plain_password="${MONITORING_LOKI_PASSWORD:-$(openssl rand -base64 16)}"
 
     # Generate password hashes using htpasswd (no Caddy needed)
     echo "[ WEB ]: Hashing Prometheus password..."
@@ -96,8 +92,10 @@ EOF
 
   echo "[ WEB ]: Caddy setup completed successfully!"
   echo "[ WEB ]: Configuration location: $caddy_dir"
-  echo "[ WEB ]: CrowdSec API key: $CROWDSEC_API_KEY"
-  echo "[ WEB ]: Prometheus password: [ENCRYPTED AND STORED IN .env]"
-  echo "[ WEB ]: Loki password: [ENCRYPTED AND STORED IN .env]"
+  echo "[ WEB ]: ============================================"
+  echo "[ WEB ]: SAVE THESE - Plaintext monitoring passwords:"
+  echo "[ WEB ]:   Prometheus: $prometheus_plain_password"
+  echo "[ WEB ]:   Loki:       $loki_plain_password"
+  echo "[ WEB ]: ============================================"
   echo "[ WEB ]: Add your site configurations to: $caddy_dir/caddy/sites-enabled/"
 }

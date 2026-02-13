@@ -14,13 +14,18 @@ function config_ssh() {
   sudo chown -R "$username:$username" $ssh_dir
   echo "[ SSH ]: Created ~/.ssh/authorized_keys"
 
-  echo "[ SSH ]: Paste the public key for $username (leave empty to skip)"
-  read -r public_key
+  # Pick env var based on username: DEPLOY_SSH_KEY for deploy user, ADMIN_SSH_KEY for others
+  if [ "$username" = "deploy" ]; then
+    public_key="${DEPLOY_SSH_KEY:-}"
+  else
+    public_key="${ADMIN_SSH_KEY:-}"
+  fi
+
   if [ -n "$public_key" ]; then
     echo "$public_key" | sudo tee -a "$ssh_dir/authorized_keys" >/dev/null
     echo "[ SSH ]: Public key added to $ssh_dir/authorized_keys."
   else
-    echo "[ SSH ]: No public key provided, skipping..."
+    echo "[ SSH ]: WARNING: No SSH key provided for $username (set ADMIN_SSH_KEY / DEPLOY_SSH_KEY)"
   fi
 
   # Create SSH configuration file instead of modifying main sshd_config
