@@ -5,11 +5,11 @@
   # Enable metrics for Prometheus
   metrics
 
-  # Logging - console for Docker logs and file for CrowdSec/Promtail
+  # Logging - JSON format required for Promtail label extraction
   log {
     level INFO
     output file /var/log/caddy/access.log
-    format console
+    format json
   }
 
   # Allow CrowdSec globally
@@ -18,6 +18,15 @@
     api_key {$CROWDSEC_API_KEY}
   }
 
+}
+
+# Reusable WAF snippet — use `import waf` in any site block
+(waf) {
+  coraza_waf {
+    directives `
+      Include /etc/caddy/coraza.conf
+    `
+  }
 }
 
 # Import all site configurations from sites-enabled directory

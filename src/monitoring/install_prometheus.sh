@@ -22,7 +22,7 @@ function install_prometheus() {
   # Copy Promtail configuration
   cp "$template_path/promtail/promtail.yml" "$monitoring_dir/promtail/promtail.yml"
   
-  cd "$monitoring_dir"
+  cd "$monitoring_dir" || return 1
   if [ "$development_mode" = "true" ]; then
     echo "[ MONITOR ]: Development mode - skipping Docker operations"
     echo "[ MONITOR ]: Monitoring stack files copied successfully"

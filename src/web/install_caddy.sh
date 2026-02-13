@@ -15,7 +15,7 @@ function install_caddy() {
   mkdir -p "$caddy_dir/caddy/coraza"
   mkdir -p "$caddy_dir/caddy/sites-enabled"
 
-  chown -R "$username:$username" "$caddy_dir"
+  sudo chown -R "$username:$username" "$caddy_dir"
 
   # Copy configuration files from local repo
   cp "$template_path/docker-compose.yml" "$caddy_dir/docker-compose.yml"
@@ -30,7 +30,7 @@ function install_caddy() {
   if [ "$development_mode" = "true" ]; then
     echo "[ WEB ]: Development mode - skipping Docker operations"
     echo "[ WEB ]: Creating placeholder .env file..."
-    cd "$caddy_dir"
+    cd "$caddy_dir" || return 1
     cat >"$caddy_dir/.env" <<EOF
 CROWDSEC_API_KEY=dev-placeholder-key
 PROMETHEUS_PASSWORD=dev-placeholder-password
@@ -51,7 +51,7 @@ EOF
     echo "[ WEB ]: Hashing Loki password..."
     LOKI_PASSWORD=$(htpasswd -nbB user "$loki_plain_password" | cut -d: -f2)
 
-    cd "$caddy_dir"
+    cd "$caddy_dir" || return 1
 
     # Start only CrowdSec first
     echo "[ WEB ]: Starting CrowdSec container..."
@@ -88,14 +88,15 @@ EOF
     # Start all containers now that passwords are ready
     echo "[ WEB ]: Starting all containers with generated keys..."
     sudo docker compose up -d
+
+    echo "[ WEB ]: ============================================"
+    echo "[ WEB ]: SAVE THESE - Plaintext monitoring passwords:"
+    echo "[ WEB ]:   Prometheus: $prometheus_plain_password"
+    echo "[ WEB ]:   Loki:       $loki_plain_password"
+    echo "[ WEB ]: ============================================"
   fi
 
   echo "[ WEB ]: Caddy setup completed successfully!"
   echo "[ WEB ]: Configuration location: $caddy_dir"
-  echo "[ WEB ]: ============================================"
-  echo "[ WEB ]: SAVE THESE - Plaintext monitoring passwords:"
-  echo "[ WEB ]:   Prometheus: $prometheus_plain_password"
-  echo "[ WEB ]:   Loki:       $loki_plain_password"
-  echo "[ WEB ]: ============================================"
   echo "[ WEB ]: Add your site configurations to: $caddy_dir/caddy/sites-enabled/"
 }

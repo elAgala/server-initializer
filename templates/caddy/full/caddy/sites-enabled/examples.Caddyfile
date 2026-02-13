@@ -7,13 +7,22 @@
 #   file_server
 # }
 
-# Example: Reverse Proxy for service running in docker container (must be under caddy_net)
-# api.example.com {
-#   coraza_waf {
-#     directives `
-#       Include /etc/caddy/coraza.conf
-#     `
-#   }
+# Example: Reverse Proxy for a Docker container app
 #
+# Requirements: the app container must be on caddy_net.
+# Add the following to your app's docker-compose.yml:
+#
+#   services:
+#     my-app:
+#       image: my-app:latest
+#       networks:
+#         - caddy_net
+#
+#   networks:
+#     caddy_net:
+#       external: true
+#
+# api.example.com {
+#   import waf
 #   reverse_proxy * http://{CONTAINER_NAME}:{CONTAINER_PORT}
 # }
