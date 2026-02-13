@@ -3,10 +3,9 @@
 ## Installation
 
 ```bash
-wget https://raw.githubusercontent.com/elAgala/server-initializer/main/index.sh
-chmod +x index.sh
-./index.sh <username>
+curl -fsSL https://raw.githubusercontent.com/elAgala/server-initializer/main/index.sh | bash -s <username>
 ```
+
 
 ## Included
 - Server update
