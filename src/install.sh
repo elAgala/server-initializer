@@ -57,26 +57,31 @@ fi
 LOG_FILE="/var/log/server-initializer.log"
 > "$LOG_FILE"
 
-run_step() {
-  local label="$1"
-  shift
+_spinner() {
   local spin_chars='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
   local sc_len=${#spin_chars}
-
-  printf "  %-40s" "$label"
-
-  "$@" >> "$LOG_FILE" 2>&1 &
-  local pid=$!
   local i=0
-
-  while kill -0 "$pid" 2>/dev/null; do
+  while true; do
     printf "\b%s" "${spin_chars:i%sc_len:1}"
     i=$((i + 1))
     sleep 0.1
   done
+}
 
-  wait "$pid"
+run_step() {
+  local label="$1"
+  shift
+
+  printf "  %-40s" "$label"
+
+  _spinner &
+  local spinner_pid=$!
+
+  "$@" >> "$LOG_FILE" 2>&1
   local exit_code=$?
+
+  kill "$spinner_pid" 2>/dev/null
+  wait "$spinner_pid" 2>/dev/null
 
   if [ $exit_code -eq 0 ]; then
     printf "\bdone\n"
