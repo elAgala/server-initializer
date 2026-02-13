@@ -9,6 +9,8 @@ if [ -z "$ADMIN_USER" ]; then
   exit 1
 fi
 
+trap 'cd / && rm -rf "$TARGET_DIR"' EXIT
+
 if [ ! -d "$TARGET_DIR" ]; then
   echo "Cloning the repository..."
   git clone "$REPO_URL" "$TARGET_DIR"
@@ -23,7 +25,4 @@ chmod +x ./install.sh
 
 echo "[ INITIALIZER ]: Setup completed succesfully!"
 
-echo "[ INITIALIZER ]: Cleaning up"
-cd /
-rm -rf "$TARGET_DIR"
 echo "[ INITIALIZER ]: Success!"
