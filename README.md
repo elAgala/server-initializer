@@ -11,7 +11,10 @@ curl -fsSL https://raw.githubusercontent.com/elAgala/server-initializer/main/ind
 Or remotely via SSH:
 
 ```bash
-ssh root@<host> "ADMIN_SSH_KEY='ssh-ed25519 AAAA...' DEPLOY_SSH_KEY='ssh-ed25519 AAAA...' bash -c '\$(curl -fsSL https://raw.githubusercontent.com/elAgala/server-initializer/main/index.sh)' -- <username>"
+ssh root@<host> \
+  "export ADMIN_SSH_KEY='ssh-ed25519 AAAA...' && \
+   export DEPLOY_SSH_KEY='ssh-ed25519 AAAA...' && \
+   curl -fsSL https://raw.githubusercontent.com/elAgala/server-initializer/main/index.sh | bash -s -- <username>"
 ```
 
 
