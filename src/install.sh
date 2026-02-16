@@ -110,7 +110,7 @@ run_step "Creating admin user..." create_user "$1"
 run_step "Configuring SSH for $1..." config_ssh "$1"
 
 # Deploy user
-run_step "Creating deploy user..." create_deploy_user
+run_step "Creating deploy user..." create_deploy_user "$1"
 run_step "Configuring SSH for deploy..." config_ssh "deploy"
 
 # Docker
