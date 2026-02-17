@@ -13,9 +13,12 @@ function install_caddy() {
   mkdir -p "$caddy_dir/crowdsec"
   mkdir -p "$caddy_dir/caddy"
   mkdir -p "$caddy_dir/caddy/coraza"
-  mkdir -p "$caddy_dir/caddy/sites-enabled"
-
   sudo chown -R "$username:$username" "$caddy_dir"
+
+  # Create the real sites-enabled directory under deploy's home
+  sudo mkdir -p /home/deploy/caddy-sites
+  sudo chown deploy:deploy /home/deploy/caddy-sites
+  sudo chmod 2775 /home/deploy/caddy-sites
 
   # Copy configuration files from local repo
   cp "$template_path/docker-compose.yml" "$caddy_dir/docker-compose.yml"
@@ -23,9 +26,15 @@ function install_caddy() {
   cp "$template_path/caddy/Caddyfile" "$caddy_dir/caddy/Caddyfile"
   cp "$template_path/caddy/coraza/coraza.conf" "$caddy_dir/caddy/coraza/coraza.conf"
   cp "$template_path/crowdsec/acquis.yaml" "$caddy_dir/crowdsec/acquis.yaml"
-  cp "$template_path/caddy/sites-enabled/prometheus.Caddyfile" "$caddy_dir/caddy/sites-enabled/prometheus.Caddyfile"
-  cp "$template_path/caddy/sites-enabled/loki.Caddyfile" "$caddy_dir/caddy/sites-enabled/loki.Caddyfile"
-  cp "$template_path/caddy/sites-enabled/examples.Caddyfile" "$caddy_dir/caddy/sites-enabled/examples.Caddyfile"
+
+  # Copy initial site configs to deploy-owned directory
+  cp "$template_path/caddy/sites-enabled/prometheus.Caddyfile" /home/deploy/caddy-sites/
+  cp "$template_path/caddy/sites-enabled/loki.Caddyfile" /home/deploy/caddy-sites/
+  cp "$template_path/caddy/sites-enabled/examples.Caddyfile" /home/deploy/caddy-sites/
+  sudo chown deploy:deploy /home/deploy/caddy-sites/*
+
+  # Symlink from caddy dir to deploy-owned directory
+  ln -s /home/deploy/caddy-sites "$caddy_dir/caddy/sites-enabled"
 
   if [ "$development_mode" = "true" ]; then
     echo "[ WEB ]: Development mode - skipping Docker operations"
