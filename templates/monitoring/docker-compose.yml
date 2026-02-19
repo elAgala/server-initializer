@@ -56,7 +56,7 @@ services:
 
   # PORT 3100
   loki:
-    image: grafana/loki:3.4.0
+    image: grafana/loki:3.6.6
     container_name: loki
     volumes:
       - ./loki/loki.yml:/etc/loki/local-config.yaml
