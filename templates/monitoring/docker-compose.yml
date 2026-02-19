@@ -69,7 +69,7 @@ services:
 
   # PORT 9080
   promtail:
-    image: grafana/promtail:3.4.0
+    image: grafana/promtail:3.6.6
     container_name: promtail
     volumes:
       - ./promtail/promtail.yml:/etc/promtail/config.yml
