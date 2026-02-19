@@ -28,8 +28,6 @@ function install_caddy() {
   cp "$template_path/crowdsec/acquis.yaml" "$caddy_dir/crowdsec/acquis.yaml"
 
   # Copy initial site configs to deploy-owned directory
-  cp "$template_path/caddy/sites-enabled/prometheus.Caddyfile" /home/deploy/caddy-sites/
-  cp "$template_path/caddy/sites-enabled/loki.Caddyfile" /home/deploy/caddy-sites/
   cp "$template_path/caddy/sites-enabled/examples.Caddyfile" /home/deploy/caddy-sites/
   sudo chown deploy:deploy /home/deploy/caddy-sites/*
 
@@ -42,24 +40,8 @@ function install_caddy() {
     cd "$caddy_dir" || return 1
     cat >"$caddy_dir/.env" <<EOF
 CROWDSEC_API_KEY=dev-placeholder-key
-PROMETHEUS_PASSWORD=dev-placeholder-password
-LOKI_PASSWORD=dev-placeholder-password
 EOF
   else
-    echo "[ WEB ]: Installing apache2-utils for password hashing..."
-    sudo apt-get update
-    sudo apt-get install -y apache2-utils
-
-    echo "[ WEB ]: Setting up authentication passwords..."
-    prometheus_plain_password="${MONITORING_PROMETHEUS_PASSWORD:-$(openssl rand -base64 16)}"
-    loki_plain_password="${MONITORING_LOKI_PASSWORD:-$(openssl rand -base64 16)}"
-
-    # Generate password hashes using htpasswd (no Caddy needed)
-    echo "[ WEB ]: Hashing Prometheus password..."
-    PROMETHEUS_PASSWORD=$(htpasswd -nbB user "$prometheus_plain_password" | cut -d: -f2)
-    echo "[ WEB ]: Hashing Loki password..."
-    LOKI_PASSWORD=$(htpasswd -nbB user "$loki_plain_password" | cut -d: -f2)
-
     cd "$caddy_dir" || return 1
 
     # Start only CrowdSec first
@@ -90,8 +72,6 @@ EOF
     # Create final .env file with all real values
     cat >"$caddy_dir/.env" <<EOF
 CROWDSEC_API_KEY='$CROWDSEC_API_KEY'
-PROMETHEUS_PASSWORD='$PROMETHEUS_PASSWORD'
-LOKI_PASSWORD='$LOKI_PASSWORD'
 EOF
 
     # Start all containers now that passwords are ready

@@ -20,6 +20,9 @@ ssh root@<host> \
 
 ## Included
 - Server update
-- User creation
+- User creation (admin + deploy)
 - SSH key configuration (AllowUser, disable root login)
-- 
+- Docker installation and network setup
+- Caddy web server with WAF (Coraza) and CrowdSec
+- UFW firewall
+- Utilities (vim, zsh, make)

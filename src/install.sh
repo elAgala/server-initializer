@@ -10,7 +10,6 @@ source ./docker/create_networks.sh
 source ./utils/install_vim.sh
 source ./utils/install_zsh.sh
 source ./utils/install_make.sh
-source ./monitoring/install_prometheus.sh
 
 chmod +x ./user/create_user.sh
 chmod +x ./user/ssh_config.sh
@@ -18,7 +17,6 @@ chmod +x ./web/setup_ufw.sh
 chmod +x ./docker/install_docker.sh
 chmod +x ./utils/install_vim.sh
 chmod +x ./utils/install_zsh.sh
-chmod +x ./monitoring/install_prometheus.sh
 
 if [ -z "$1" ]; then
   echo "Usage: $0 <username> [--development]"
@@ -129,9 +127,6 @@ run_step "Installing Vim..." install_vim
 run_step "Installing Zsh..." install_zsh "$1"
 run_step "Installing Make..." install_make
 
-# Monitoring
-run_step "Installing monitoring stack..." install_prometheus "$1" "$REPO_DIR" "$DEVELOPMENT_MODE"
-
 echo ""
 echo "============================================"
 echo "           INSTALLATION SUMMARY"
@@ -151,11 +146,6 @@ echo ""
 echo "WEB SERVER (Caddy)"
 echo "  Dir:    /home/$1/web-server"
 echo "  Sites:  /home/$1/web-server/caddy/sites-enabled/"
-echo ""
-echo "MONITORING"
-echo "  Dir:              /home/$1/monitoring"
-echo "  Prometheus pass:  $prometheus_plain_password"
-echo "  Loki pass:        $loki_plain_password"
 echo ""
 echo "CROWDSEC"
 echo "  API Key: $CROWDSEC_API_KEY"

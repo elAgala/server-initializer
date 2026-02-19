@@ -6,7 +6,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Server-initializer is a Docker-based server setup automation tool that provisions Ubuntu/Debian servers with a complete web infrastructure stack including:
 - Caddy web server with WAF (Coraza) and CrowdSec protection
-- Prometheus, Loki, Grafana monitoring stack
 - User management and SSH configuration
 - Docker containers with proper networking
 
@@ -20,7 +19,7 @@ make dev
 # Build and keep container alive for testing
 make dev-keep-alive
 
-# Build Docker test container  
+# Build Docker test container
 make build
 
 # Clean up test containers and images
@@ -36,7 +35,7 @@ The `--development` flag can be passed to `install.sh` to skip Docker-related op
 These commands should be run from within the `templates/caddy/full/` directory on the deployed server:
 
 ```bash
-# Restart Caddy with config reload  
+# Restart Caddy with config reload
 make caddy:restart
 
 # Generate new CrowdSec API key
@@ -59,25 +58,21 @@ make caddy:logs
 - `user/` - User creation, SSH configuration, deploy user setup
 - `web/` - Caddy installation and UFW firewall setup
 - `docker/` - Docker installation and network creation
-- `monitoring/` - Prometheus stack setup
 - `utils/` - System utilities (vim, zsh, make)
 - `templates/` - Configuration templates for services
 
 ### Docker Networks
 The system creates two external networks:
 - `caddy_net` - For web services
-- `monitoring_net` - For monitoring stack
+- `monitoring_net` - For monitoring stack (used by CrowdSec)
 
 ### Templates Directory
 - `templates/caddy/full/` - Complete Caddy setup with WAF, CrowdSec, and authentication
-- `templates/monitoring/` - Prometheus, Loki, Grafana, Node Exporter, cAdvisor stack
 - `templates/nginx-certbot/` - Alternative nginx setup
 
 ### Key Files
 - `templates/caddy/full/docker-compose.yml` - Main Caddy service definition
-- `templates/monitoring/docker-compose.yml` - Monitoring stack services
-- `web/install_caddy.sh:33` - Caddy installation with password setup
-- `monitoring/install_prometheus.sh:25` - Monitoring stack deployment
+- `web/install_caddy.sh` - Caddy installation with CrowdSec setup
 
 ## Installation Flow
 
@@ -85,10 +80,7 @@ The system creates two external networks:
 2. Docker installation and network creation
 3. Caddy installation with security features
 4. User and SSH configuration
-5. Monitoring stack deployment
-6. System utilities installation
-
-The installer prompts for Prometheus and Loki passwords during setup, which are encrypted using Caddy's hash-password function.
+5. System utilities installation
 
 ## Custom Caddy Image
 
